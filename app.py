@@ -1,4 +1,4 @@
-import base64
+mport base64
 import re
 from pathlib import Path
 
@@ -818,21 +818,10 @@ def show_analyzer_page():
                     with st.expander("📝 Gemini 상세 분석 결과 보기", expanded=True):
                         st.markdown(clean_result)
 
-             except Exception as e:
-    error_message = str(e)
+                except Exception as e:
+                    st.error("오류가 발생했습니다.")
+                    st.write(e)
 
-    if "503" in error_message or "UNAVAILABLE" in error_message or "high demand" in error_message:
-        st.error("현재 Gemini 서버 사용량이 많아 일시적으로 분석에 실패했습니다.")
-        st.info("잠시 후 다시 시도하거나, 이미지 개수를 줄여서 다시 분석해 주세요.")
-    elif "429" in error_message or "quota" in error_message.lower():
-        st.error("API 사용량 제한에 도달했을 수 있습니다.")
-        st.info("잠시 후 다시 시도하거나 API 키 사용량을 확인해 주세요.")
-    elif "API key" in error_message or "api_key" in error_message:
-        st.error("Gemini API Key에 문제가 있을 수 있습니다.")
-        st.info("API 키가 올바르게 입력되었는지 확인해 주세요.")
-    else:
-        st.error("오류가 발생했습니다.")
-        st.write(e)
 
 # -----------------------------
 # 페이지 라우팅
