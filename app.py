@@ -570,20 +570,30 @@ def show_analyzer_page():
         "복용 중인 약물이 있거나 질환이 있는 경우 반드시 의사 또는 약사와 상담하세요."
     )
 
+    # -----------------------------
     # API Key 설정
-st.sidebar.header("API 설정")
+    # -----------------------------
+    st.sidebar.header("API 설정")
 
-try:
-    api_key = st.secrets["GEMINI_API_KEY"]
-    st.sidebar.success("Gemini API Key가 Streamlit Secrets에 설정되어 있습니다.")
-except Exception:
-    api_key = st.sidebar.text_input("Gemini API Key 입력", type="password")
-    st.sidebar.caption("Streamlit Secrets가 없을 때만 직접 입력합니다.")
+    api_key = ""
 
-if not api_key:
-    st.info("Streamlit Secrets 또는 왼쪽 사이드바에 Gemini API Key를 설정하면 분석을 시작할 수 있습니다.")
+    try:
+        api_key = str(st.secrets["GEMINI_API_KEY"]).strip()
+    except Exception:
+        api_key = ""
 
+    if api_key:
+        st.sidebar.success("Gemini API Key가 Streamlit Secrets에 설정되어 있습니다.")
+    else:
+        api_key = st.sidebar.text_input("Gemini API Key 입력", type="password").strip()
+        st.sidebar.caption("Streamlit Secrets가 없을 때만 직접 입력합니다.")
+
+    if not api_key:
+        st.info("Streamlit Secrets 또는 왼쪽 사이드바에 Gemini API Key를 설정하면 분석할 수 있습니다.")
+
+    # -----------------------------
     # 사용자 기본 정보
+    # -----------------------------
     st.header("1. 사용자 건강 정보 입력")
 
     col1, col2 = st.columns(2)
@@ -603,7 +613,9 @@ if not api_key:
         placeholder="예: 고혈압약 복용 중, 빈혈 있음, 특별한 질환 없음"
     )
 
+    # -----------------------------
     # 생활 습관 설문
+    # -----------------------------
     st.header("2. 생활 습관 설문")
 
     sleep = st.selectbox(
@@ -641,7 +653,9 @@ if not api_key:
         ["피로 개선", "면역 관리", "뼈 건강", "피부 건강", "식사 보충", "기타"]
     )
 
+    # -----------------------------
     # 영양제 입력
+    # -----------------------------
     st.header("3. 영양제 정보 입력")
 
     input_method = st.radio(
@@ -687,12 +701,14 @@ if not api_key:
                     use_container_width=True
                 )
 
+    # -----------------------------
     # 분석 실행
+    # -----------------------------
     st.header("4. AI 분석 결과")
 
     if st.button("AI로 영양제 분석하기", type="primary"):
         if not api_key:
-            st.error("Gemini API Key를 먼저 입력하세요.")
+            st.error("Gemini API Key를 먼저 설정하세요.")
 
         elif input_method in ["이미지 업로드", "카메라 촬영"] and not uploaded_images:
             st.error("분석할 이미지를 업로드하거나 촬영하세요.")
@@ -825,6 +841,10 @@ if not api_key:
 
                 except Exception as e:
                     st.error("오류가 발생했습니다.")
+                    st.warning(
+                        "Gemini API 응답 지연, 할당량 초과, 이미지 인식 오류, 또는 API 키 문제일 수 있습니다. "
+                        "발표 중이라면 미리 준비한 결과 캡처 화면으로 설명해도 됩니다."
+                    )
                     st.write(e)
 
 
