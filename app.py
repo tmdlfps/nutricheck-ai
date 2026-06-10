@@ -570,13 +570,18 @@ def show_analyzer_page():
         "복용 중인 약물이 있거나 질환이 있는 경우 반드시 의사 또는 약사와 상담하세요."
     )
 
-    # API Key 입력
-    st.sidebar.header("API 설정")
-    api_key = st.sidebar.text_input("Gemini API Key 입력", type="password")
-    st.sidebar.caption("API 키는 코드에 저장되지 않고 실행 중인 앱에서만 사용됩니다.")
+    # API Key 설정
+st.sidebar.header("API 설정")
 
-    if not api_key:
-        st.info("왼쪽 사이드바에 Gemini API Key를 입력하면 분석을 시작할 수 있습니다.")
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+    st.sidebar.success("Gemini API Key가 Streamlit Secrets에 설정되어 있습니다.")
+except Exception:
+    api_key = st.sidebar.text_input("Gemini API Key 입력", type="password")
+    st.sidebar.caption("Streamlit Secrets가 없을 때만 직접 입력합니다.")
+
+if not api_key:
+    st.info("Streamlit Secrets 또는 왼쪽 사이드바에 Gemini API Key를 설정하면 분석을 시작할 수 있습니다.")
 
     # 사용자 기본 정보
     st.header("1. 사용자 건강 정보 입력")
